@@ -19,7 +19,6 @@ services:
       - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      ELASTIC_PASSWORD: changeme
       # Use single node discovery in order to disable production mode and avoid bootstrap checks.
       # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
       discovery.type: single-node
@@ -66,6 +65,40 @@ services:
       - "5601:5601"
     networks:
       - elk
+    depends_on:
+      - elasticsearch
+
+  redis:
+    image: redis
+    command: redis-server --requirepass Dpk123456
+    ports:
+      - "6378:6379"
+    networks:
+      - elk
+
+  elastalert:
+    image: bitsensor/elastalert:3.0.0-beta.1 # 适配ELK 7.11.2 版本
+    networks:
+      - elk
+    volumes:
+      - type: bind
+        source: ./elastalert/config/elastalert.yaml
+        target: /opt/elastalert/config.yaml
+        read_only: true 
+      - type: bind
+        source: ./elastalert/config/elastalert-test.yaml
+        target: /opt/elastalert/config-test.yaml
+        read_only: true 
+      - type: bind
+        source: ./elastalert/config/config.json
+        target: /opt/elastalert-server/config/config.json
+        read_only: true 
+      - type: bind
+        source: ./elastalert/rules
+        target: /opt/elastalert/rules
+      - type: bind
+        source: ./elastalert/rule_templates
+        target: /opt/elastalert/rules_templates
     depends_on:
       - elasticsearch
 
