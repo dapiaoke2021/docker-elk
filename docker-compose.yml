@@ -43,6 +43,8 @@ services:
       - "5044:5044"
       - "5000:5000/tcp"
       - "5000:5000/udp"
+      - "6667:6667/tcp"
+      - "6667:6667/udp"
       - "9600:9600"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
@@ -84,10 +86,6 @@ services:
       - type: bind
         source: ./elastalert/config/elastalert.yaml
         target: /opt/elastalert/config.yaml
-        read_only: true 
-      - type: bind
-        source: ./elastalert/config/elastalert-test.yaml
-        target: /opt/elastalert/config-test.yaml
         read_only: true 
       - type: bind
         source: ./elastalert/config/config.json
