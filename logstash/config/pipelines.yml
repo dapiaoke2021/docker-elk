@@ -1,0 +1,2 @@
+- pipeline.id: java
+  path.config: "/usr/share/logstash/pipeline/java.conf"

@@ -18,7 +18,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ES_JAVA_OPTS: "-Xmx4096m -Xms1024m"
       # Use single node discovery in order to disable production mode and avoid bootstrap checks.
       # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
       discovery.type: single-node
@@ -40,14 +40,10 @@ services:
         target: /usr/share/logstash/pipeline
         read_only: true
     ports:
-      - "5044:5044"
-      - "5000:5000/tcp"
-      - "5000:5000/udp"
-      - "6667:6667/tcp"
-      - "6667:6667/udp"
-      - "9600:9600"
+      - "6669:6669/tcp"
+      - "6668:6668/tcp"
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LS_JAVA_OPTS: "-Xmx1024m -Xms1024m"
     networks:
       - elk
     depends_on:
@@ -78,27 +74,6 @@ services:
     networks:
       - elk
 
-  elastalert:
-    image: bitsensor/elastalert:3.0.0-beta.1 # 适配ELK 7.11.2 版本
-    networks:
-      - elk
-    volumes:
-      - type: bind
-        source: ./elastalert/config/elastalert.yaml
-        target: /opt/elastalert/config.yaml
-        read_only: true 
-      - type: bind
-        source: ./elastalert/config/config.json
-        target: /opt/elastalert-server/config/config.json
-        read_only: true 
-      - type: bind
-        source: ./elastalert/rules
-        target: /opt/elastalert/rules
-      - type: bind
-        source: ./elastalert/rule_templates
-        target: /opt/elastalert/rules_templates
-    depends_on:
-      - elasticsearch
 
 networks:
   elk:
